@@ -1,10 +1,21 @@
-# Getting Started with Create React App
+## README
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This code is a React component that allows the user to create a list of tags and store them in the URL. It uses the `useState` hook from the `react` library to manage the state of the list of tags and the input field for adding new tags.
 
-## Available Scripts
+The component takes in a `props` object with the following properties:
+- `solid`: a boolean value indicating whether the tags should have a solid background color
+- `color`: a string representing the color of the tags
+- `param`: a string representing the URL parameter that stores the list of tags
+- `title`: a string representing the title of the tag list
 
-In the project directory, you can run:
+The component has the following functions:
+- `TagList`: the main component function that returns JSX to render the tag list. It uses the `useState` hook to initialize the state of the `items` array with the list of tags stored in the URL and the `input` string with an empty string.
+- `addItem`: a function that takes in a new tag as an input and adds it to the `items` array if it is not already in the array or if it is an empty string. It then updates the URL with the updated list of tags.
+- `handleInput`: a function that takes in an event object and updates the `input` state with the value of the input field. It also listens for the `Enter` key press and calls the `addItem` function with the current `input` value.
+- `removeTag`: a function that takes in a tag as an input and removes it from the `items` array. It then updates the URL with the updated list of tags.
+
+The component also includes a form element with an input field and a submit button that allows the user to add new tags to the list. The tags are displayed in a list element as clickable elements that call the `removeTag` function when clicked. The component also applies various styles to the tags and the form elements using class names from a `css` file.
+
 
 ### `npm start`
 
@@ -14,57 +25,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
+<!-- ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information. -->
+/
