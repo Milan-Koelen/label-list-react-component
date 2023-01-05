@@ -1,6 +1,5 @@
-import { cleanup, render, screen } from '@testing-library/react';
-
-import List from './List';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { default as List } from './List';
 
 afterEach(cleanup);
 
@@ -51,3 +50,42 @@ test('Empty list warning', () => {
     expect(message).toHaveTextContent("No tags");
 });
 
+test('Invalid input', () => {
+    Object.defineProperty(window, 'location', {
+        value: {
+            href: "http://dummy.com/?tags=tag1,tag2,tag3",
+            writable: true
+        }
+    });
+    render(<List param={"tags"} title={"Tags"} />);
+    const input = screen.getByTestId("input-test-id");
+    fireEvent.change(input, { target: { value: "tag1" } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 13 });
+});
+
+
+test('Add item', () => {
+    Object.defineProperty(window, 'location', {
+        value: {
+            href: "http://dummy.com/?tags=tag1,tag2,tag3",
+            writable: true
+        }
+    });
+
+    render(<List param={"tags"} title={"Tags"} />);
+    const input = screen.getByTestId("input-test-id");
+    fireEvent.change(input, { target: { value: "tag4" } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 13 });
+    const listItems = screen.getAllByTestId("list-item-test-id");
+
+    // Check list length
+    expect(listItems).toHaveLength(4);
+    // Check item values
+    expect(listItems[0]).toHaveTextContent("tag1");
+    expect(listItems[1]).toHaveTextContent("tag2");
+    expect(listItems[2]).toHaveTextContent("tag3");
+    // expect(listItems[3]).toHaveTextContent("tag4");
+    // Check url is updated
+    // expect(urlSpy).toHaveBeenCalledWith("http://dummy.com/?tags=tag1,tag2,tag3,tag4");
+
+});
