@@ -10,7 +10,7 @@ function App() {
       <List className="pt-[33vh]"
         title="tags"
         param="tags"
-        color="red"
+        color="orange"
         solid={true} />
       <List className="pt-[33vh]" title="categories" param="categories" color="indigo" solid={true} />
       <List className="pt-[33vh]" title="colors" param="colors" color="green" solid={false} />

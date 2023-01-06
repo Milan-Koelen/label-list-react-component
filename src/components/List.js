@@ -116,11 +116,17 @@ function List(props) {
 
         if (!items.includes(input) && input !== '') {
 
-            handleUrlChange()
-
-            console.log("input is: ", input)
-            console.log(...items, input)
-            setItems([...items, input]);
+            input.split(',').map((item) => {
+                if (!items.includes(item)) {
+                    console.log("adding item: ", item)
+                    setItems([...items, item]);
+                    handleUrlChange()
+                    return item
+                } else {
+                    console.log(`item "${item}" is already in list or is empty`)
+                    return "item already in list"
+                }
+            })
 
         } else {
             console.log(`item "${input}" already in list`)
@@ -129,8 +135,20 @@ function List(props) {
     }
 
 
-    function handleInput(e) {
-        setInput(e)
+    function handleInput(input) {
+        // separate input by commas
+        if (input.includes(',')) {
+            let newInput = input.split(',');
+            newInput = newInput.map((item) => item.trim());
+            setInput(newInput);
+        }
+        console.log(input)
+        // if (e.target.value.includes(',')) {
+        //     let newInput = e.target.value.split(',');
+        //     newInput = newInput.map((item) => item.trim());
+        //     setInput(newInput);
+        // }
+        setInput(input)
         // console.log("input is: ", input)
     }
 
@@ -152,7 +170,7 @@ function List(props) {
         }
     }
     return (
-        <div className='xs:w-full sm:w-[50vw] md:w-[33vw] lg:w-[20vw] pb-6 mb-2'>
+        <div className='pb-6 mb-2'>
             <h1 className={"text-3xl font-thin my-2 first-letter:capitalize"} data-testid={"title-test-id"}>{props.title}</h1>
             <div className={color + 'border-[.5px] opacity-30 w-full '}></div>
             <form className='pb-2 mx-8' onSubmit={(e) => handleSubmit(e)}>
@@ -188,5 +206,4 @@ function List(props) {
         </div >
     );
 }
-
 export default List;
