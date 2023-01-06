@@ -12,20 +12,7 @@ function List(props) {
     const [items, setItems] = useState([]);
     const [input, setInput] = useState("");
 
-    // destructure url
-    let url = window.location.href;
-    if (!url.includes("?")) {
-        url = url + '?';
-    }
-    let domain = url.split('?')[0];
-    let params = url.split('?')[1];
-    let paramsArray = params.split('&');
-    for (let i = 0; i < paramsArray.length; i++) {
-        if (paramsArray[i].includes(props.param)) {
-            let urlItems = paramsArray[i].split(props.param + "=")[1].split(',');
-            urlItems = urlItems.map((item) => decodeURIComponent(item)).filter((item) => item !== '');
-        }
-    }
+
     // if param not in url, items will be empty array
     // if param is in url, items will be array of items
     useEffect(() => {
@@ -42,107 +29,96 @@ function List(props) {
         }
     }, [props.param,]);
 
-    function handleUrlChange() {
 
+    function handleUrlChange() {
         let url = window.location.href;
         if (!url.includes("?")) {
             url = url + '?';
         }
-        let domain = url.split('?')[0];
+        const domain = url.split('?')[0];
         let params = url.split('?')[1];
-        let paramsArray = params.split('&');
-        for (let i = 0; i < paramsArray.length; i++) {
-            if (paramsArray[i].includes(props.param)) {
-                let urlItems = paramsArray[i].split(props.param + "=")[1].split(',');
-                urlItems = urlItems.map((item) => decodeURIComponent(item)).filter((item) => item !== '');
-            }
+        const paramsArray = params.split('&').filter(param => !param.includes(props.param));
+        console.log("paramsArray: ", paramsArray)
+        let urlItems = [];
+        if (params.includes(props.param)) {
+            urlItems = params.split(props.param + "=")[1].split(',').map(item => decodeURIComponent(item)).filter(item => item !== '');
+            console.log("urlItems: ", urlItems)
+            console.log("state items: ", items)
         }
-        domain = url.split('?')[0];
-        params = url.split('?')[1];
-        paramsArray = params.split('&');
-        for (let i = 0; i < paramsArray.length; i++) {
-            if (paramsArray[i].includes(props.param)) {
-                let urlItems = paramsArray[i].split(props.param + "=")[1].split(',');
-                urlItems = urlItems.map((item) => decodeURIComponent(item)).filter((item) => item !== '');
-                console.log(items)
-            }
-        }
+        paramsArray.push(`${props.param}=${items.join(",")}`);
+        const newUrl = `${domain}?${paramsArray.join("&")}`;
 
-        console.log("url changed")
-        // console.log("current url: ", window.location.href)
-        // console.log("current items: ", items)
-        // console.log("params array ", paramsArray)
-        console.log("changed param is: ", props.param)
-        if (items.length === 0) {
-            console.log("items is empty")
-            // add param with item to url and preserve other params
-            const newUrl = domain + '?' + props.param + '=' + input + '&' + paramsArray.filter((param) => !param.includes(props.param)).join('&');
-
-
-            console.log("new url: ", newUrl)
-            setItems([input])
-            window.history.pushState({}, '',
-                newUrl);
-
-        } else {
-            const newItems = [...items, input];
-            setItems(newItems);
-            const newUrl = domain + '?' + props.param + '=' + items.join(',') + '&' + paramsArray.filter((param) => !param.includes(props.param)).join('&');
-            window.history.pushState({}, '',
-                // domain + '?' + props.param + '=' + items.join(',') + '&' + paramsArray.filter((param) => !param.includes(props.param)).join('&')
-                newUrl
-            );
-        }
-        console.log("new items: ", items)
+        window.history.pushState({}, '', newUrl);
+        console.log("url changed", newUrl);
     }
+
+
 
     function handleSubmit(e) {
         e.preventDefault()
         // Validate Input
 
-        // console.log("onSubmit")
         if (input !== '' || input !== ' ' || input !== undefined) {
             console.log("adding item: ", input)
-            addItem(e)
-        } else {
-            console.log(input, "Invalid input")
-        }
-    }
-
-    function addItem(e) {
-        e.preventDefault()
-        console.log("current array ", items)
-        console.log(input)
-
-        if (!items.includes(input) && input !== '') {
-
-            input.split(',').map((item) => {
-                if (!items.includes(item)) {
-                    console.log("adding item: ", item)
-                    setItems([...items, item]);
+            // If input is a comma separated list, add each item to list
+            if (input.includes(',')) {
+                input.split(',').map((item) => {
+                    if (!items.includes(item)) {
+                        console.log("adding item: ", item)
+                        setItems([...items, item]);
+                        handleUrlChange()
+                        return item
+                    } else {
+                        console.log(`item "${item}" is already in list or is empty`)
+                        return "item already in list"
+                    }
+                })
+            } else {
+                if (!items.includes(input)) {
+                    console.log("adding item: ", input)
+                    setItems([...items, input]);
                     handleUrlChange()
-                    return item
                 } else {
-                    console.log(`item "${item}" is already in list or is empty`)
-                    return "item already in list"
+                    console.log(`item "${input}" is already in list or is empty`)
                 }
-            })
-
-        } else {
-            console.log(`item "${input}" already in list`)
+            }
+            setInput("");
         }
-        setInput("");
     }
+
+    // function addItem(e) {
+    //     e.preventDefault()
+    //     console.log("current array ", items)
+    //     console.log(input)
+
+    //     if (!items.includes(input) && input !== '') {
+
+    //         input.split(',').map((item) => {
+    //             if (!items.includes(item)) {
+    //                 console.log("adding item: ", item)
+    //                 setItems([...items, item]);
+    //                 handleUrlChange()
+    //                 return item
+    //             } else {
+    //                 console.log(`item "${item}" is already in list or is empty`)
+    //                 return "item already in list"
+    //             }
+    //         })
+
+    //     } else {
+    //         console.log(`item "${input}" already in list`)
+    //     }
+    //     setInput("");
+    // }
 
 
     function handleInput(input) {
         // separate input by commas
         if (input.includes(',')) {
-            let newInput = input.split(',');
-            newInput = newInput.map((item) => item.trim());
-            setInput(newInput);
+            // let newInput = input.split(',');
+            input = input.split(',')((item) => item.trim());
+            // setInput(newInput);
         }
-        console.log(input)
         // if (e.target.value.includes(',')) {
         //     let newInput = e.target.value.split(',');
         //     newInput = newInput.map((item) => item.trim());
@@ -154,19 +130,21 @@ function List(props) {
 
     function removeItem(item, e) {
         e.preventDefault()
-        // remove item from items array
         // console.log("remove item from " + props.name + ": ", item)
         const newItems = items.filter((t) => t !== item);
         setItems(newItems);
         // update url
         if (newItems.length === 0) {
-            window.history.pushState({}, '',
-                domain + '?' + paramsArray.filter((param) => !param.includes(props.param)).join('&')
-            );
+            handleUrlChange()
+            // window.history.pushState({}, '',
+            //     domain + '?' + paramsArray.filter((param) => !param.includes(props.param)).join('&')
+            // );
         } else {
-            window.history.pushState({}, '',
-                domain + '?' + props.param + '=' + newItems.join(',') + '&' + paramsArray.filter((param) => !param.includes(props.param)).join('&')
-            );
+            // const newUrl = domain + '?' + props.param + '=' + newItems.join(',') + '&' + paramsArray.filter((param) => !param.includes(props.param)).join('&');
+            // window.history.pushState({}, '',
+            //     domain + '?' + props.param + '=' + newItems.join(',') + '&' + paramsArray.filter((param) => !param.includes(props.param)).join('&')
+            // );
+            handleUrlChange()
         }
     }
     return (
