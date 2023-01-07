@@ -15,17 +15,23 @@ function List2(props) {
     // if param is in url, items will be array of items
     useEffect(() => {
         let url = window.location.href;
-        if (!url.includes(props.param)) {
+        if (!url.includes(props.param) || !url.includes(props.param + "=")) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            let urlItems = []
-            setItems(urlItems);
+            console.log("url: ", url)
+            return
         } else {
-            // remove empty values and add items to state
+            // remove empty, decode characters values and add items to state
             let urlItems = url.split(props.param + "=")[1].split("&")[0].split(',');
-            urlItems = urlItems.map((item) => decodeURIComponent(item)).filter((item) => item !== '' || item !== ' ' || item !== undefined);
+            urlItems = urlItems.filter((item) => item !== '' || item !== ' ' || item !== undefined);
+            urlItems = urlItems.map((item) =>
+                decodeURIComponent(item)).filter((item) =>
+                    item !== '' || item !== ' ' || item !== undefined);
+            console.log("urlItems: ", urlItems)
             setItems(urlItems);
         }
-    }, [props.param,]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
 
     function handleInput(value) {
         setInput(value);
@@ -36,10 +42,9 @@ function List2(props) {
         // Validate Input
         if (input === '' || input === ' ' || input === undefined) {
             alert("Please enter a valid value");
-
         } else {
             // Add item to state
-            setItems(items => [...items, input]);
+            setItems([...items, input]);
             console.log("After setInput ", items)
             handleUrlChange();
         }
@@ -53,22 +58,43 @@ function List2(props) {
         }
         const domain = url.split('?')[0];
         let params = url.split('?')[1];
+        // preserve other params
         const paramsArray = params.split('&').filter(param => !param.includes(props.param));
         console.log("paramsArray: ", paramsArray)
-        paramsArray.push(`${props.param}=${items.join(",")}`);
-        console.log("paramsArray: ", paramsArray)
+        let newUrl = '';
+        if (items.length === 0) {
+            // if no items, remove param from url
+            newUrl = `${domain}?${paramsArray.join("&")}`;
+        } else {
 
-        const newUrl = `${domain}?${paramsArray.join("&")}`;
+            paramsArray.push(`${props.param}=${items.join(",")}`);
+            console.log("paramsArray: ", paramsArray)
+            // exclude first join frm & and add ? to beginning
+
+            newUrl = `${domain}?${paramsArray.join("&")}`;
+        }
 
         window.history.pushState({}, '', newUrl);
         console.log("url changed", newUrl);
     }
 
+    useEffect(() => {
+        handleUrlChange();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [items])
+
     function handleDeleteItem(item) {
         // Remove item from state
         const updatedList = items.filter((i) => i !== item);
-        setItems(() => [...updatedList]);
+        if (updatedList === []) {
+            setItems([]);
+        } else {
+            setItems([...updatedList]);
+            handleUrlChange();
+            console.log("listLength:", items.length)
+        }
         handleUrlChange();
+
     }
 
     return (
