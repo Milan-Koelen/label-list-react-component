@@ -1,6 +1,6 @@
 import '../index.css';
 // Get items from url
-const url = window.location.href;
+
 // decode encoded characters
 
 function Footer() {
