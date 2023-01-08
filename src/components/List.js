@@ -52,7 +52,7 @@ function List(props) {
                 }
                 item.classList.remove('border', 'border-solid', 'border-' + props.color + '-100', 'bg-' + props.color + '-100', 'text-gray-600');
                 item.classList.add('border', 'border-solid', 'border-' + props.color + '-400', 'text-gray-200');
-            }, 400);
+            }, 1000);
         }
         else {
             // check and separate for commas
@@ -127,7 +127,7 @@ function List(props) {
                     // item !== '' &&
                     <li
                         // eslint-disable-next-line no-multi-str
-                        className={color + 'transition-colors ease-in-out duration-200 text-sm mx-1 px-2 inline-flex rounded-3xl -my-2 first-letter:capitalize hover:border-red-400 text-gray-200 hover:bg-red-400 hover:line-through hover:cursor-pointer'}
+                        className={color + 'transition ease-in-out duration-500 text-sm mx-1 px-2 inline-flex rounded-3xl -my-2 first-letter:capitalize hover:border-red-400 text-gray-200 hover:bg-red-400 hover:line-through hover:cursor-pointer'}
                         onClick={(e) => handleDeleteItem(item)}
                         key={item + props.param}
                         id={item + props.param}

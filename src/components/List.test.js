@@ -36,6 +36,25 @@ test("Get list items from url", () => {
     expect(listItems[2]).toHaveTextContent("test3");
 });
 
+test("Decode unicode characters from url", () => {
+    Object.defineProperty(window, 'location', {
+        value: {
+            href: "http://dummy.com/?tags=%25,%3F,%26,%3D,%24,%7B%7D",
+            writable: true
+        }
+    });
+    render(<List param={"tags"} title={"Tags"} />);
+    const listItems = screen.getAllByTestId("list-item-test-id");
+
+    expect(listItems[0]).toHaveTextContent('%'); // percent sign (%25)
+    expect(listItems[1]).toHaveTextContent('?'); // question mark (%3F)
+    expect(listItems[2]).toHaveTextContent('&'); // ampersand (%26)
+    expect(listItems[3]).toHaveTextContent('='); // equals sign (%3D)
+    expect(listItems[4]).toHaveTextContent('$'); // dollar sign (%24)
+    expect(listItems[5]).toHaveTextContent('{}'); // curly braces (%7B%7D)
+
+});
+
 test('Empty list warning', () => {
     Object.defineProperty(window, 'location', {
         value: {
