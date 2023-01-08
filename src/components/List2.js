@@ -9,10 +9,10 @@ function List2(props) {
         color = ' border-' + props.color + '-400 border border-solid ';
         // console.log(color)
     }
+
     const [items, setItems] = useState([]);
     const [input, setInput] = useState("");
-    // if param not in url, items will be empty array
-    // if param is in url, items will be array of items
+
     useEffect(() => {
         let url = window.location.href;
         if (!url.includes(props.param) || !url.includes(props.param + "=")) {
@@ -57,7 +57,7 @@ function List2(props) {
         else {
             // check and separate for commas
             if (input.includes(",")) {
-                console.log("COMMA")
+                console.log("COMMA")   // TODO: add comma separated items to list
                 const inputArray = input.split(",");
                 inputArray.forEach((item) => {
                     if (item !== '' || item !== ' ' || item !== undefined) {
@@ -66,7 +66,7 @@ function List2(props) {
                 })
             }
             setItems([...items, input]);
-            console.log("After setInput ", items)
+            console.log("New Items Array: ", items)
         }
         setInput("");
     }
@@ -76,31 +76,22 @@ function List2(props) {
         if (!url.includes("?")) {
             url = url + '?';
         }
-        const domain = url.split('?')[0];
         let params = url.split('?')[1];
         // preserve other params
         const paramsArray = params.split('&').filter(param => !param.includes(props.param));
-        let newUrl = '';
+        let urlParams = '';
         if (items.length === 0) {
             // if no items, remove param from url
-            newUrl = `${domain}?${paramsArray.join("&")}`;
+            urlParams = `?${paramsArray.join("&")}`;
         } else {
             paramsArray.push(`${props.param}=${items.join(",")}`);
             console.log("paramsArray: ", paramsArray)
-            // exclude first join frm & and add ? to beginning
-            newUrl = `${domain}?${paramsArray.join("&")}`;
+            urlParams = `?${paramsArray.join("&")}`;
         }
-        // separate host and path
-        // const host = newUrl.split('/')[2];
-        const path = newUrl.split('/')[3];
-        console.log("pathPAramsJoin: ", paramsArray.join("&"))
-        console.log("path: ", path)
-        window.history.replaceState({}, '', path);
-        console.log("url changed", newUrl);
+        window.history.replaceState({}, '', urlParams);
     }
 
     function handleDeleteItem(item) {
-        // Remove item from state
         const updatedList = items.filter((i) => i !== item);
         if (updatedList === []) {
             setItems([]);
@@ -108,7 +99,6 @@ function List2(props) {
             setItems([...updatedList]);
             // console.log("listLength:", items.length)
         }
-        handleUrlChange();
     }
 
     return (
