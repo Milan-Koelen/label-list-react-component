@@ -1,5 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
 import { default as List } from './List';
+
 
 afterEach(cleanup);
 
@@ -21,7 +23,35 @@ test('Title text', () => {
     expect(title).toHaveTextContent("Tags");
 });
 
-test("Get list items from url", () => {
+test('Non solid color from props', () => {
+    Object.defineProperty(window, 'location', {
+        value: {
+            href: "http://dummy.com/?tags=tag1,tag2,tag3",
+            writable: true
+        }
+    });
+    render(<List param={"tags"} title={"Tags"} color={"red"} solid={false} />);
+    const listItems = screen.getAllByTestId("list-item-test-id");
+    expect(listItems[0]).toHaveClass('border', 'border-solid', 'border-red-400', 'text-gray-200');
+    expect(listItems[1]).toHaveClass('border', 'border-solid', 'border-red-400', 'text-gray-200');
+    expect(listItems[2]).toHaveClass('border', 'border-solid', 'border-red-400', 'text-gray-200');
+});
+
+test('Solid color from props', () => {
+    Object.defineProperty(window, 'location', {
+        value: {
+            href: "http://dummy.com/?tags=tag1,tag2,tag3",
+            writable: true
+        }
+    });
+    render(<List param={"tags"} title={"Tags"} color={"red"} solid={true} />);
+    const listItems = screen.getAllByTestId("list-item-test-id");
+    expect(listItems[0]).toHaveClass('bg-red-400', 'text-gray-200');
+    expect(listItems[1]).toHaveClass('bg-red-400', 'text-gray-200');
+    expect(listItems[2]).toHaveClass('bg-red-400', 'text-gray-200');
+});
+
+test("Get list items from url", async () => {
     Object.defineProperty(window, 'location', {
         value: {
             href: "http://dummy.com/?tags=test1,test2,test3",
@@ -30,6 +60,7 @@ test("Get list items from url", () => {
     });
     render(<List param={"tags"} title={"Tags"} />);
     const listItems = screen.getAllByTestId("list-item-test-id");
+
     expect(listItems).toHaveLength(3);
     expect(listItems[0]).toHaveTextContent("test1");
     expect(listItems[1]).toHaveTextContent("test2");
@@ -76,12 +107,18 @@ test('Invalid input', () => {
             writable: true
         }
     });
-    render(<List param={"tags"} title={"Tags"} />);
+    render(<List param={"tags"} title={"Tags"} color={"green"} solid={true} />);
     const input = screen.getByTestId("input-test-id");
+    const form = screen.getByTestId("form-test-id");
     fireEvent.change(input, { target: { value: "tag1" } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 13 });
+    fireEvent.submit(form)
+    const listItems = screen.getAllByTestId("list-item-test-id");
+    expect(listItems).toHaveLength(3);
+    expect(listItems[0]).toHaveTextContent("tag1");
+    expect(listItems[1]).toHaveTextContent("tag2");
+    expect(listItems[2]).toHaveTextContent("tag3");
+    expect(listItems[0]).toHaveClass("bg-green-100");
 });
-
 
 test('Add item', () => {
     Object.defineProperty(window, 'location', {
@@ -93,18 +130,52 @@ test('Add item', () => {
 
     render(<List param={"tags"} title={"Tags"} />);
     const input = screen.getByTestId("input-test-id");
+    const form = screen.getByTestId("form-test-id");
+
     fireEvent.change(input, { target: { value: "tag4" } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 13 });
-    const listItems = screen.getAllByTestId("list-item-test-id");
+    fireEvent.submit(form);
+
+    // Rerender to get updated list
+
+    const listItems2 = screen.getAllByTestId("list-item-test-id");
 
     // Check list length
-    expect(listItems).toHaveLength(4);
+    expect(listItems2).toHaveLength(4);
     // Check item values
-    expect(listItems[0]).toHaveTextContent("tag1");
-    expect(listItems[1]).toHaveTextContent("tag2");
-    expect(listItems[2]).toHaveTextContent("tag3");
-    // expect(listItems[3]).toHaveTextContent("tag4");
-    // Check url is updated
-    // expect(urlSpy).toHaveBeenCalledWith("http://dummy.com/?tags=tag1,tag2,tag3,tag4");
+    expect(listItems2[0]).toHaveTextContent("tag1");
+    expect(listItems2[1]).toHaveTextContent("tag2");
+    expect(listItems2[2]).toHaveTextContent("tag3");
+    expect(listItems2[3]).toHaveTextContent("tag4");
+    expect(input).toHaveValue("");
+});
 
+test("Add multiple items", () => {
+    Object.defineProperty(window, 'location', {
+        value: {
+            href: "http://dummy.com/?tags=tag1,tag2,tag3",
+            writable: true
+        }
+    });
+
+    render(<List param={"tags"} title={"Tags"} />);
+    const input = screen.getByTestId("input-test-id");
+    const form = screen.getByTestId("form-test-id");
+
+    fireEvent.change(input, { target: { value: "tag4,tag5,tag6" } });
+    fireEvent.submit(form);
+
+    // Rerender to get updated list
+
+    const listItems2 = screen.getAllByTestId("list-item-test-id");
+
+    // Check list length
+    expect(listItems2).toHaveLength(6);
+    // Check item values
+    expect(listItems2[0]).toHaveTextContent("tag1");
+    expect(listItems2[1]).toHaveTextContent("tag2");
+    expect(listItems2[2]).toHaveTextContent("tag3");
+    expect(listItems2[3]).toHaveTextContent("tag4");
+    expect(listItems2[4]).toHaveTextContent("tag5");
+    expect(listItems2[5]).toHaveTextContent("tag6");
+    expect(input).toHaveValue("");
 });

@@ -24,7 +24,7 @@ function List(props) {
             urlItems = urlItems.map((item) =>
                 decodeURIComponent(item)).filter((item) =>
                     item !== '' || item !== ' ' || item !== undefined);
-            console.log("urlItems: ", urlItems)
+            // console.log("urlItems: ", urlItems)
             setItems(urlItems);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,11 +37,13 @@ function List(props) {
 
     function handleSubmit(e) {
         e.preventDefault()
-        // Validate Input
+        // INPUT VALIDATION
+        // EMPTY INPUT
         if (input === '' || input === ' ' || input === undefined) {
             alert("Please enter a valid value");
+
+            // ITEM ALREADY EXISTS
         } if (items.includes(input)) {
-            // accentuate item in list with color
             const item = document.getElementById(input + props.param);
             // remove and add class to trigger animation
             item.classList.remove('border', 'border-solid', 'border-' + props.color + '-400', 'bg-' + props.color + '-400', 'text-gray-200');
@@ -57,13 +59,15 @@ function List(props) {
         else {
             // check and separate for commas
             if (input.includes(",")) {
-                console.log("COMMA")   // TODO: add comma separated items to list
+                // console.log("input includes commas: ", input)
                 const inputArray = input.split(",");
-                inputArray.forEach((item) => {
-                    if (item !== '' || item !== ' ' || item !== undefined) {
-                        setItems([...items, item]);
-                    }
-                })
+                console.log("inputArray: ", inputArray)
+                // inputArray.forEach(() => {
+                setItems((items) => [...items, ...inputArray]);
+                // if (item !== '' || item !== ' ' || item !== undefined) {
+                //     setItems([...items, item]);
+                // }
+                // })
             }
             setItems([...items, input]);
             console.log("New Items Array: ", items)
@@ -85,7 +89,7 @@ function List(props) {
             urlParams = `?${paramsArray.join("&")}`;
         } else {
             paramsArray.push(`${props.param}=${items.join(",")}`);
-            console.log("paramsArray: ", paramsArray)
+            // console.log("paramsArray: ", paramsArray)
             urlParams = `?${paramsArray.join("&")}`;
         }
         window.history.replaceState({}, '', urlParams);
@@ -105,7 +109,7 @@ function List(props) {
         <div className='pb-6 mb-2'>
             <h1 className={"text-3xl font-thin my-2 first-letter:capitalize"} data-testid={"title-test-id"}>{props.title}</h1>
             <div className={color + 'border-[.5px] opacity-30 w-full '}></div>
-            <form className='pb-2 mx-8' onSubmit={(e) => handleSubmit(e)}>
+            <form className='pb-2 mx-8' data-testid={"form-test-id"} onSubmit={(e) => handleSubmit(e)}>
                 <input
                     onChange={(event) => setInput(event.target.value)}
                     type="text"
