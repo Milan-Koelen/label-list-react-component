@@ -3,10 +3,10 @@
 This code is a React component that allows the user to create a list of tags and store them in the URL. It uses the `useState` hook from the `react` library to manage the state of the list of tags and the input field for adding new tags.
 
 The component takes in a `props` object with the following properties:
-- `solid`: a boolean value indicating whether the tags should have a solid background color
-- `color`: a string representing the color of the tags
+- `solid` (optional): a boolean value indicating whether the tags should have a solid background color (Default = `false`)
+- `color` (optional): a string representing the color of the tags (Default = `grey-200`)
 - `param`: a string representing the URL parameter that stores the list of tags
-- `title`: a string representing the title of the tag list
+- `title` (optional): a string representing the title of the tag list (Ommit if no title wanted)
 
 The component has the following functions:
 - `TagList`: the main component function that returns JSX to render the tag list. It uses the `useState` hook to initialize the state of the `items` array with the list of tags stored in the URL and the `input` string with an empty string.
@@ -29,4 +29,3 @@ You may also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information. -->
-/
