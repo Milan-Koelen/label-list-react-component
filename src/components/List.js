@@ -17,7 +17,7 @@ function List(props) {
         let url = window.location.href;
         if (!url.includes(props.param) || !url.includes(props.param + "=")) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            console.log("url: ", url)
+            // console.log("url: ", url)
         } else {
             // remove empty, decode characters values and add items to state
             let urlItems = url.split(props.param + "=")[1].split("&")[0].split(',');
@@ -61,17 +61,16 @@ function List(props) {
             if (input.includes(",")) {
                 // console.log("input includes commas: ", input)
                 const inputArray = input.split(",");
-                console.log("inputArray: ", inputArray)
-                // inputArray.forEach(() => {
-                setItems((items) => [...items, ...inputArray]);
-                // if (item !== '' || item !== ' ' || item !== undefined) {
-                //     setItems([...items, item]);
-                // }
-                // })
+                // console.log("inputArray: ", inputArray);
+                // filter out any empty or undefined items
+                const newArrayOfItems = [...items, ...inputArray.filter(item => item.trim())];
+                setItems(newArrayOfItems);
+            } else {
+                setItems([...items, input]);
             }
-            setItems([...items, input]);
-            console.log("New Items Array: ", items)
+            // console.log("New Items Array: ", items);
         }
+
         setInput("");
     }
 
